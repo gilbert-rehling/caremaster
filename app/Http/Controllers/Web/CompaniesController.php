@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Web;
 
 /**
  * @uses
@@ -11,10 +11,20 @@ use App\Http\Requests\UpdateCompanyRequest;
 use Illuminate\Http\Response;
 
 /**
- * Handle API requests for company data
+ * Handle web based company data requests
  */
 class CompaniesController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        //
+    }
+
     /**
      * Create a new resource in storage.
      *

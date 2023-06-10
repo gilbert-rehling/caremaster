@@ -1,27 +1,37 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Web;
 
 /**
  * @uses
  */
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateCompanyRequest;
-use App\Http\Requests\UpdateCompanyRequest;
+use App\Http\Requests\CreateEmployeeRequest;
+use App\Http\Requests\UpdateEmployeeRequest;
 use Illuminate\Http\Response;
 
 /**
- * Handle API requests for company data
+ * Handle web based employee data requests
  */
-class CompaniesController extends Controller
+class EmployeesController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        //
+    }
+
     /**
      * Create a new resource in storage.
      *
-     * @param  CreateCompanyRequest  $request
+     * @param CreateEmployeeRequest $request
      * @return Response
      */
-    public function create(CreateCompanyRequest $request)
+    public function create(CreateEmployeeRequest $request)
     {
         //
     }
@@ -40,11 +50,11 @@ class CompaniesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  UpdateCompanyRequest  $request
+     * @param  UpdateEmployeeRequest  $request
      * @param  int  $id
      * @return Response
      */
-    public function update(UpdateCompanyRequest $request, $id)
+    public function update(UpdateEmployeeRequest $request, $id)
     {
         //
     }
