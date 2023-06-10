@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\CompaniesController;
+use App\Http\Controllers\Web\EmployeesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,4 +22,59 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [\App\Http\Controllers\Web\HomeController::class, 'index'])->name('home');
+/**
+ * Routes that requires a logged-in user
+ */
+Route::get(
+    '/home',
+    [
+        HomeController::class, 'index'
+    ]
+)->name('home');
+
+/* Companies - Longhand */
+Route::get('/companies', [
+    CompaniesController::class, 'index'
+])->name('companies');
+
+Route::post('/companies/create', [
+    CompaniesController::class, 'create'
+])->name('company-create');
+
+Route::get('/companies/read/{id?}', [
+    CompaniesController::class, 'read'
+])->name('company-edit');
+
+Route::post('/companies/update/{id}', [
+    CompaniesController::class, 'update'
+])->name('company-update');
+
+Route::get('/companies/delete/{id}', [
+    CompaniesController::class, 'delete'
+])->name('company-delete');
+
+/* Employees - Shorthand */
+Route::get(
+    '/companies',
+    'EmployeesController@index'
+)->name('companies');
+
+Route::post(
+    '/companies/create',
+    'EmployeesController@create'
+)->name('company-create');
+
+Route::get(
+    '/companies/read/{id?}',
+    'EmployeesController@read'
+)->name('company-edit');
+
+Route::post(
+    '/companies/update/{id}',
+    'EmployeesController@update'
+)->name('company-update');
+
+Route::get(
+    '/companies/delete/{id}',
+    'EmployeesController@delete'
+)->name('company-delete');
