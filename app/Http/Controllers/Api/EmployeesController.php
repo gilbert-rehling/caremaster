@@ -11,7 +11,8 @@ use App\Http\Requests\UpdateEmployeeRequest;
 use Illuminate\Http\Response;
 
 /**
- * Handle API requests for employee data
+ * Handle potential API requests for employee data.
+ * This class uses terse methods that directly match the intention
  */
 class EmployeesController extends Controller
 {
@@ -28,6 +29,7 @@ class EmployeesController extends Controller
 
     /**
      * Display the specified resource.
+     * This method could return a single entity or all.
      *
      * @param  int  $id
      * @return Response

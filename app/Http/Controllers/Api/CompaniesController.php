@@ -11,7 +11,8 @@ use App\Http\Requests\UpdateCompanyRequest;
 use Illuminate\Http\Response;
 
 /**
- * Handle API requests for company data
+ * Handle potential API requests for company data.
+ * This class uses terse methods that directly match the intention
  */
 class CompaniesController extends Controller
 {
@@ -28,6 +29,7 @@ class CompaniesController extends Controller
 
     /**
      * Display the specified resource.
+     * This method could return a single entity or all.
      *
      * @param  int  $id
      * @return Response

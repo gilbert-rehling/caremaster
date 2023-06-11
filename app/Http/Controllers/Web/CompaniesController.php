@@ -26,12 +26,22 @@ class CompaniesController extends Controller
     }
 
     /**
-     * Create a new resource in storage.
+     * Show the form for creating a new resource.
      *
-     * @param  CreateCompanyRequest  $request
      * @return Response
      */
-    public function create(CreateCompanyRequest $request)
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param CreateCompanyRequest $request
+     * @return Response
+     */
+    public function store(CreateCompanyRequest $request)
     {
         //
     }
@@ -42,7 +52,18 @@ class CompaniesController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function read($id)
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
     {
         //
     }
@@ -50,8 +71,8 @@ class CompaniesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  UpdateCompanyRequest  $request
-     * @param  int  $id
+     * @param UpdateCompanyRequest $request
+     * @param int $id
      * @return Response
      */
     public function update(UpdateCompanyRequest $request, $id)
@@ -60,12 +81,12 @@ class CompaniesController extends Controller
     }
 
     /**
-     * Delete the specified resource from storage.
+     * Remove the specified resource from storage.
      *
      * @param  int  $id
      * @return Response
      */
-    public function delete($id)
+    public function destroy($id)
     {
         //
     }
