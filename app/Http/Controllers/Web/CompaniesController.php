@@ -8,6 +8,8 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
+use App\Models\Company;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response;
 
 /**
@@ -18,11 +20,18 @@ class CompaniesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
-        //
+        /** @var Company $companies */
+        $companies = Company::all();
+        return view(
+            'admin/companies',
+            [
+                'companies' => $companies
+            ]
+        );
     }
 
     /**
@@ -32,7 +41,7 @@ class CompaniesController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin/companies-form');
     }
 
     /**
@@ -61,11 +70,16 @@ class CompaniesController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return Response
+     * @return View
      */
-    public function edit($id)
+    public function edit(int $id): View
     {
-        //
+        $company = Company::find($id);
+        return view('admin/companies-form',
+            [
+                'company' => $company
+            ]
+        );
     }
 
     /**

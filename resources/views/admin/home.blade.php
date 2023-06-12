@@ -14,7 +14,11 @@
                         </div>
                     @endif
 
-                    {{ __('You are logged in!') }}
+                        {{ __('Choose a menu item below to continue:') }}
+                        <ul>
+                            <li><a href="/companies">{{ __('Companies') }}</a></li>
+                            <li><a href="/employees">{{ __('Employees') }}</a></li>
+                        </ul>
                 </div>
             </div>
         </div>

@@ -6,3 +6,32 @@
 
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
+
+div.data {
+    ul {
+        list-style: none;
+    }
+    ul.item {
+        border-bottom: #4a5568 solid 1px;
+        margin-bottom: 20px;
+        padding-left: 0;
+    }
+}
+
+img.list-image {
+    max-height: 100px;
+    width: auto;
+}
+
+form {
+    label {
+        min-width: 150px;
+    }
+    input {
+        width: 400px;
+    }
+}
+
+.pull-right {
+    float: right;
+}
