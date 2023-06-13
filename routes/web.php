@@ -78,7 +78,7 @@ Route::get(
 | URL:          /companies/create
 | Controller:   Web\CompaniesController@store
 | Method:       POST
-| Description:  Stores a new company in the database
+| Description:  Stores (saves) a new company entity in the database
 */
 Route::post(
     '/companies/create',
@@ -129,7 +129,7 @@ Route::get(
 | Description:  Updates a company entity in the database
 */
 Route::post(
-    '/companies/create',
+    '/companies/edit/{id}',
     [
         CompaniesController::class, 'update'
     ]
@@ -147,6 +147,7 @@ Route::post(
 Route::get('/companies/delete/{id}', [
     CompaniesController::class, 'destroy'
 ])->name('company-delete');
+
 
 /** Employees - Shorthand */
 /*
@@ -203,7 +204,7 @@ Route::post(
 Route::get(
     '/employees/{id}',
     'EmployeesController@show'
-)->name('company-show');
+)->name('employee-show');
 
 /*
 |------------------------------------------

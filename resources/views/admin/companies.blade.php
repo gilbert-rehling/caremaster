@@ -6,7 +6,7 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        {{ __('Companies') }}
+                        <strong>{{ __('Company list:') }}</strong>
                         <span class="pull-right">
                             <a href="/companies/create" title="{{ __('Add new company') }}">{{ __('New') }}</a>
                         </span>
@@ -20,7 +20,6 @@
                         @endif
 
                         @if ($companies)
-                            <strong>{{ __('Company list:') }}</strong>
 
                             <ul>
                                 @foreach ($companies as $company)
@@ -28,6 +27,9 @@
                                         <ul class="item">
                                             <li>
                                                 <a title="{{ __('Click to edit') }}" href="/companies/edit/{{ $company->id }}">{{ $company->name }}</a>
+                                                <span class="pull-right">
+                                                    <a href="/companies/{{ $company->id }}" title="{{ __('View company') }}">{{ __('View') }}</a>
+                                                </span>
                                             </li>
                                             <li>
                                                 @if ($company->logo)
