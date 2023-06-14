@@ -60,6 +60,9 @@
                                     </li>
                                 @endforeach
                             </ul>
+
+                            <hr>
+                            {{ $companies->links() }}
                         @else
                             <strong>{{ __('No companies found!') }}</strong>
                         @endif
