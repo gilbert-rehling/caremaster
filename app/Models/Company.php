@@ -7,6 +7,7 @@ namespace App\Models;
  */
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Company model required for Companies data
@@ -26,4 +27,17 @@ class Company extends Model
         'website',
         'logo',
     ];
+
+    // Defines which database table to use
+    protected $table = 'companies';
+
+    /**
+     * Fetch employees for this company
+     *
+     * @return HasMany
+     */
+    public function employees(): HasMany
+    {
+        return $this->hasMany(Employee::class);
+    }
 }

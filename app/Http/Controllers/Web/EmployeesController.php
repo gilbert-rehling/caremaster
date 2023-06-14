@@ -8,64 +8,140 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
+use App\Models\Company;
+use App\Models\Employee;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Handle web based employee data requests
+ *
+ * ToDo: fix up the session flash alert class handling in the views
  */
 class EmployeesController extends Controller
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
-        //
+        /** @var Employee $employee */
+        return view(
+            'admin/employees',
+            [
+                //'employees' => DB::table('employees')->paginate(10)
+                'employees' => Employee::with('company')->paginate(10)
+            ]
+        );
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return View
      */
-    public function create()
+    public function create(): View
     {
-        //
+        return view(
+            'admin/employees-form',
+            [
+                // we need to provide a companies list
+                'companies' => Company::all()
+            ]
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  CreateEmployeeRequest  $request
-     * @return Response
+     * @return RedirectResponse|Redirector
      */
-    public function store(CreateEmployeeRequest $request)
+    public function store(CreateEmployeeRequest $request): Redirector|RedirectResponse
     {
-        //
+        try {
+            $data = $request->validated();
+
+            $employee = new Employee();
+            $employee->first_name = $data['first_name'];
+            $employee->last_name = $data['last_name'];
+            $employee->email = $data['email'];
+            $employee->phone = $data['phone'];
+        //    $employee->save();
+            $employee->company()->associate(Company::find($data['company_id']));
+            $employee->save();
+
+
+            // set message
+            Session::flash('status', 'Employee Created Successfully!');
+            //Session::flash('alert-class', 'alert-success');
+
+            // return to list
+            return redirect('/employees');
+
+
+        } catch (ValidationException $e) {
+            // This should be handled by Laravel
+            Session::flash('status', $e->getMessage());
+            //Session::flash('alert-class', 'alert-danger');
+
+            // return to form
+            return redirect('/employees/create');
+
+        } catch (\Exception $e) {
+            // get unhandled exceptions
+            Session::flash('status', $e->getMessage());
+            //Session::flash('alert-class', 'alert-danger');
+
+            // return to form
+            return redirect('/employees/create');
+        }
     }
 
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return Response
+     * @return View
      */
-    public function show($id)
+    public function show(int $id): View
     {
-        //
+        return view('admin/employees-item',
+            [
+                'employee' => Employee::find($id)
+            ]
+        );
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return Response
+     * @return View
      */
-    public function edit($id)
+    public function edit(int $id): View
     {
-        //
+        return view('admin/employees-form',
+            [
+                'employee' => Employee::find($id),
+                'companies' => Company::all()
+            ]
+        );
     }
 
     /**
@@ -73,21 +149,88 @@ class EmployeesController extends Controller
      *
      * @param  UpdateEmployeeRequest  $request
      * @param  int  $id
-     * @return Response
+     * @return Redirector|RedirectResponse
      */
-    public function update(UpdateEmployeeRequest $request, $id)
+    public function update(UpdateEmployeeRequest $request, int $id): Redirector|RedirectResponse
     {
-        //
+        try {
+            $data = $request->validated();
+
+            // idiot check
+            if ($data['id'] == $id) {
+                // do update
+                $employee = Employee::find($id);
+                $employee->first_name = $data['first_name'];
+                $employee->last_name = $data['last_name'];
+                $employee->email = $data['email'];
+                $employee->phone = $data['phone'];
+                $employee->save();
+
+                // let update the company if its changed
+                if ($employee->company_id != $data['company_id']) {
+                    $employee->company()->associate(Company::find($data['company_id']));
+                    $employee->save();
+                }
+
+                // success
+                Session::flash('status', 'Employee entity with ID ' . $id . ' updated successfully!');
+                //Session::flash('alert-class', 'alert-success');
+
+                // return to form
+                return redirect('/employees/edit/' . $id);
+            }
+
+            // set an error message
+            Session::flash('status', 'Pre update security check failed!');
+            //Session::flash('alert-class', 'alert-danger');
+
+            // return to list
+            return redirect('/employees');
+
+        } catch (\Exception $e) {
+            // get unhandled exceptions
+            Session::flash('status', $e->getMessage());
+            //Session::flash('alert-class', 'alert-danger');
+
+            // return to form
+            return redirect('/companies/create/' . $id);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return Response
+     * @return Redirector|RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(int $id): Redirector|RedirectResponse
     {
-        //
+        try {
+            if ($id > 0) {
+                Employee::where('id', $id)->delete();
+
+                // set message
+                Session::flash('status', 'Employee entity with ID ' . $id. ' deleted successfully!');
+                //Session::flash('alert-class', 'alert-success');
+
+                // return to list
+                return redirect('/employees');
+            }
+
+            // set message
+            Session::flash('status', 'Zero (0) is not a valid entity ID');
+            //Session::flash('alert-class', 'alert-danger');
+
+            // return to list
+            return redirect('/employees');
+
+        } catch(\Exception $e) {
+            // get unhandled exceptions
+            Session::flash('status', $e->getMessage());
+            //Session::flash('alert-class', 'alert-danger');
+
+            // return to edit form
+            return redirect('/employees/edit/' . $id);
+        }
     }
 }

@@ -149,7 +149,7 @@ Route::get('/companies/delete/{id}', [
 ])->name('company-delete');
 
 
-/** Employees - Shorthand */
+/** Employees routes - class ref */
 /*
 |------------------------------------------
 | Get employees
@@ -161,7 +161,9 @@ Route::get('/companies/delete/{id}', [
 */
 Route::get(
     '/employees',
-    'EmployeesController@index'
+    [
+        EmployeesController::class, 'index'
+    ]
 )->name('employees');
 
 /*
@@ -175,7 +177,9 @@ Route::get(
 */
 Route::get(
     '/employees/create',
-    'EmployeesController@create'
+    [
+        EmployeesController::class, 'create'
+    ]
 )->name('employee-create');
 
 /*
@@ -189,7 +193,9 @@ Route::get(
 */
 Route::post(
     '/employees/create',
-    'EmployeesController@store'
+    [
+        EmployeesController::class, 'store'
+    ]
 )->name('employee-store');
 
 /*
@@ -203,7 +209,9 @@ Route::post(
 */
 Route::get(
     '/employees/{id}',
-    'EmployeesController@show'
+    [
+    EmployeesController::class, 'show'
+    ]
 )->name('employee-show');
 
 /*
@@ -217,7 +225,9 @@ Route::get(
 */
 Route::get(
     '/employees/edit/{id}',
-    'EmployeesController@edit'
+    [
+    EmployeesController::class, 'edit'
+    ]
 )->name('employee-edit');
 
 /*
@@ -231,7 +241,9 @@ Route::get(
 */
 Route::post(
     '/employees/edit/{id}',
-    'EmployeesController@update'
+    [
+    EmployeesController::class, 'update'
+    ]
 )->name('employee-update');
 
 /*
@@ -245,5 +257,7 @@ Route::post(
 */
 Route::get(
     '/employees/delete/{id}',
-    'EmployeesController@destroy'
+    [
+    EmployeesController::class, 'destroy'
+    ]
 )->name('employee-delete');

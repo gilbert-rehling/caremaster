@@ -6,9 +6,9 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <strong>{{ __('Company') }}</strong>
+                        <strong>{{ __('Employee') }}</strong>
                         <span class="pull-right">
-                            <a href="/companies/create" title="{{ __('Add new company') }}">{{ __('New') }}</a>
+                            <a href="/employees/create" title="{{ __('Add new employee') }}">{{ __('New') }}</a>
                         </span>
                     </div>
 
@@ -19,44 +19,36 @@
                             </div>
                         @endif
 
-                        @if ($company)
+                        @if ($employee)
 
                             <ul>
                                 <li>
                                     <ul class="item">
                                         <li>
-                                            <a title="{{ __('Click to edit') }}" href="/companies/edit/{{ $company->id }}">{{ $company->name }}</a>
+                                            <a
+                                                title="{{ __('Click to edit') }}"
+                                                href="/employees/edit/{{ $employee->id }}"
+                                            >{{ $employee->first_name }} {{ $employee->last_name }}
+                                            </a>
                                         </li>
                                         <li>
-                                            @if ($company->logo)
-                                            <img
-                                                alt="{{ $company->name }} Logo"
-                                                src="/storage/images/{{ $company->logo }}"
-                                                class=""
-                                            />
-                                            @else
-                                            <img
-                                                alt="Company has no logo"
-                                                src="/storage/images/no-image.jpg"
-                                                class="list-image"
-                                            />
-                                            @endif
+                                            Company: {{ $employee->company->name }}
                                         </li>
-                                        @if ($company->email)
+                                        @if ($employee->email)
                                         <li>
-                                            Email: {{ $company->email }}
+                                            Email: {{ $employee->email }}
                                         </li>
                                         @endif
-                                        @if ($company->website)
+                                        @if ($employee->phone)
                                         <li>
-                                            Website: {{ $company->website }}
+                                            Phone: {{ $employee->phone }}
                                         </li>
                                         @endif
                                     </ul>
                                 </li>
                             </ul>
                             <span class="pull-right">
-                                <a href="/companies" title="{{ __('Return to list') }}">{{ __('Back') }}</a>
+                                <a href="/employees" title="{{ __('Back to list') }}">{{ __('Back') }}</a>
                             </span>
                         @endif
                     </div>

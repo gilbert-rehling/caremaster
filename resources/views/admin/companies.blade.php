@@ -20,7 +20,7 @@
                             </div>
                         @endif
 
-                        @if ($companies)
+                        @if (count($companies))
                             <ul>
                                 @foreach ($companies as $company)
                                     <li>

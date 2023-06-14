@@ -29,6 +29,7 @@
                         @endif
 
                             @csrf
+
                             <ul class="form">
                                 <li>
                                     <label for="name">{{ __('Company name') }}:</label>

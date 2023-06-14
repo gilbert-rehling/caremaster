@@ -24,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // this was required to fix a style issue with the pagination arrows
         Paginator::useBootstrap();
     }
 }

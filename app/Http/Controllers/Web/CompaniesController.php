@@ -5,23 +5,24 @@ namespace App\Http\Controllers\Web;
 /**
  * @uses
  */
+use App\Events\NewCompanyNotification;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use mysql_xdevapi\Exception;
 use Throwable;
 
 /**
  * Handle web based company data requests
+ *
+ * ToDo: fix up the session flash alert class handling in the views
  */
 class CompaniesController extends Controller
 {
@@ -43,7 +44,7 @@ class CompaniesController extends Controller
 
         } catch (\Exception $e) {
             Session::flash('status', $e->getMessage());
-            Session::flash('alert-class', 'alert-danger');
+            //Session::flash('alert-class', 'alert-danger');
 
             // return to form
             return redirect('/companies/create');
@@ -66,7 +67,7 @@ class CompaniesController extends Controller
         } catch (\Exception $e) {
             // do not continue !!
             Session::flash('status', $e->getMessage());
-            Session::flash('alert-class', 'alert-danger');
+            //Session::flash('alert-class', 'alert-danger');
 
             // return to form
             redirect('/companies/create');
@@ -74,6 +75,20 @@ class CompaniesController extends Controller
         }
     }
 
+    /**
+     * Handles triggering the event
+     *
+     * @param Company $company
+     * @return void
+     */
+    private function sendNotification(Company $company): void
+    {
+        event(new NewCompanyNotification($company));
+    }
+
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         $this->middleware('auth');
@@ -87,7 +102,6 @@ class CompaniesController extends Controller
     public function index(): View
     {
         /** @var Company $companies */
-        // $companies = Company::all();
         return view(
             'admin/companies',
             [
@@ -116,7 +130,7 @@ class CompaniesController extends Controller
     public function store(CreateCompanyRequest $request): Redirector|RedirectResponse
     {
         try {
-            $file = false;
+            $file = '';
             $data = $request->validated();
 
             // handle the logo upload
@@ -125,16 +139,19 @@ class CompaniesController extends Controller
             }
 
             // save
-            Company::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'website' => $data['website'],
-                'logo'  => $file
-            ]);
+            $company = new Company();
+            $company->name      = $data['name'];
+            $company->email     = $data['email'];
+            $company->website   = $data['website'];
+            $company->logo      = $file;
+            $company->save();
+
+            // send notification
+            $this->sendNotification($company);
 
             // set message
             Session::flash('status', 'Company Created Successfully!');
-            Session::flash('alert-class', 'alert-success');
+            //Session::flash('alert-class', 'alert-success');
 
             // return to list
             return redirect('/companies');
@@ -142,7 +159,7 @@ class CompaniesController extends Controller
         } catch (ValidationException $e) {
             // This should be handled by Laravel
             Session::flash('status', $e->getMessage());
-            Session::flash('alert-class', 'alert-danger');
+            //Session::flash('alert-class', 'alert-danger');
 
             // return to form
             return redirect('/companies/create');
@@ -150,7 +167,7 @@ class CompaniesController extends Controller
         } catch (\Exception $e) {
             // get unhandled exceptions
             Session::flash('status', $e->getMessage());
-            Session::flash('alert-class', 'alert-danger');
+            //Session::flash('alert-class', 'alert-danger');
 
             // return to form
             return redirect('/companies/create');
@@ -165,10 +182,9 @@ class CompaniesController extends Controller
      */
     public function show(int $id): View
     {
-        $company = Company::find($id);
         return view('admin/companies-item',
             [
-                'company' => $company
+                'company' => Company::find($id)
             ]
         );
     }
@@ -181,10 +197,9 @@ class CompaniesController extends Controller
      */
     public function edit(int $id): View
     {
-        $company = Company::find($id);
         return view('admin/companies-form',
             [
-                'company' => $company
+                'company' => Company::find($id)
             ]
         );
     }
@@ -213,7 +228,7 @@ class CompaniesController extends Controller
 
                 // success
                 Session::flash('status', 'Company entity with ID ' . $id . ' updated successfully!');
-                Session::flash('alert-class', 'alert-success');
+                //Session::flash('alert-class', 'alert-success');
 
                 // return to form
                 return redirect('/companies/create/' . $id);
@@ -221,7 +236,7 @@ class CompaniesController extends Controller
 
             // set an error message
             Session::flash('status', 'Pre update security check failed!');
-            Session::flash('alert-class', 'alert-danger');
+            //Session::flash('alert-class', 'alert-danger');
 
             // return to list
             return redirect('/companies');
@@ -229,7 +244,7 @@ class CompaniesController extends Controller
         } catch (\Exception $e) {
             // get unhandled exceptions
             Session::flash('status', $e->getMessage());
-            Session::flash('alert-class', 'alert-danger');
+            //Session::flash('alert-class', 'alert-danger');
 
             // return to form
             return redirect('/companies/create/' . $id);
@@ -256,7 +271,7 @@ class CompaniesController extends Controller
 
                 // set message
                 Session::flash('status', 'Company entity with ID ' . $id. ' deleted successfully!');
-                Session::flash('alert-class', 'alert-success');
+                //Session::flash('alert-class', 'alert-success');
 
                 // return to list
                 return redirect('/companies');
@@ -264,7 +279,7 @@ class CompaniesController extends Controller
 
             // set message
             Session::flash('status', 'Zero (0) is not a valid entity ID');
-            Session::flash('alert-class', 'alert-danger');
+            //Session::flash('alert-class', 'alert-danger');
 
             // return to list
             return redirect('/companies');
@@ -272,10 +287,10 @@ class CompaniesController extends Controller
         } catch(\Exception $e) {
             // get unhandled exceptions
             Session::flash('status', $e->getMessage());
-            Session::flash('alert-class', 'alert-danger');
+            //Session::flash('alert-class', 'alert-danger');
 
-            // return to form
-            return redirect('/companies/create/' . $id);
+            // return to edit form
+            return redirect('/companies/edit/' . $id);
         }
     }
 }

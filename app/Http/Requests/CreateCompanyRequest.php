@@ -30,7 +30,7 @@ class CreateCompanyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => 'required|string|min:3|max:265',
+            'name'      => 'required|string|min:3|max:256',
             'email'     => 'sometimes|email|nullable',
             'website'   => 'sometimes|string|min:3|max:256|nullable',
             'logo'      => 'sometimes|image|dimensions:min_width=100,min_height=100'
@@ -42,7 +42,7 @@ class CreateCompanyRequest extends FormRequest
      *
      * @return array
      */
-    public function messages()
+    public function messages(): array
     {
         return [
             'name'      => 'Please enter a valid company name',
