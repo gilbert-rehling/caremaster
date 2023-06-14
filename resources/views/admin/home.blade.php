@@ -14,7 +14,7 @@
                         </div>
                     @endif
 
-                        {{ __('Choose a menu item below to continue:') }}
+                        {{ __('Choose an item below to continue:') }}
                         <ul>
                             <li><a href="/companies">{{ __('Companies') }}</a></li>
                             <li><a href="/employees">{{ __('Employees') }}</a></li>

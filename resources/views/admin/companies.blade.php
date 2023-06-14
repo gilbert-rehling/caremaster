@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
     <div class="container data">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -20,7 +21,6 @@
                         @endif
 
                         @if ($companies)
-
                             <ul>
                                 @foreach ($companies as $company)
                                     <li>
