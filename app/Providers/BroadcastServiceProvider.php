@@ -3,9 +3,9 @@
  * Laravel (R)   Kickstart Project
  * @version      BroadcastServiceProvider.php -  001 - 15 6 2023
  * @link         https://github.com/gilbert-rehling/caremaster
- * @copyright    Copyright (c) 2023.  Gilbert Rehling. All right reserved. (www.gilbert-rehling.com)
+ * @copyright    Copyright (c) 2023.  Gilbert Rehling. All right reserved. (https://github.com/gilbert-rehling)
  * @license      Released under the MIT model
- * @author       Gilbert Rehling:    gilbert@gilbertrehling.com
+ * @author       Gilbert Rehling:    gilbert@gilbert-rehling.com
  * This kickstart project provides basic authentication along with modeling for 2 data sets with a foreign key example
  * Created using Laravel 9.* on PHP 8.0.
  * To get started download and extract the package to your desired location.

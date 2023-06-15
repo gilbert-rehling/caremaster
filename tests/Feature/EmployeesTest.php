@@ -1,7 +1,7 @@
 <?php
 /*
  * Laravel (R)   Kickstart Project
- * @version      CompaniesTest.php -  001 - 15 6 2023
+ * @version      employeesTest.php -  001 - 15 6 2023
  * @link         https://github.com/gilbert-rehling/caremaster
  * @copyright    Copyright (c) 2023.  Gilbert Rehling. All right reserved. (https://github.com/gilbert-rehling)
  * @license      Released under the MIT model
@@ -14,29 +14,21 @@
  * Create and populate the .env file
  * Run: php artisan migrate
  * To seed the admin user run: php artisan db:seed --class=CreateUser
- * Seed data is also available for the Companies dataset.
+ * Seed data is also available for the employees dataset.
  * Run: php artisan storage:link - to enable access to the public images
  */
 
-namespace Tests\Feature;
-
-use App\Events\NewCompanyNotification;
-use App\Listeners\SendNewCompanyNotification;
-use App\Mail\CompanyNotification;
-use App\Models\Company;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Mail;
+use App\Models\Employee;
 use Tests\Feature\Traits\Authentication;
 use Tests\TestCase;
 
 /**
- * Companies tests
+ * Employees tests
  *
  * ToDo: Tried to use a setup() function to trigger user auth but it caused errors - needs investigation
  * ToDo: There is no test for the update action...
- * ToDo: Encountered issues testing email notification when a new company is saved - further testing required
  */
-class CompaniesTest extends TestCase
+class EmployeesTest extends TestCase
 {
     use Authentication;
 
@@ -55,122 +47,98 @@ class CompaniesTest extends TestCase
     }
 
     /**
-     * Companies list test.
+     * employees list test.
      *
      * @return void
      */
-    public function test_companies_unverified()
+    public function test_employees_unverified()
     {
-        $response = $this->get('/companies');
+        $response = $this->get('/employees');
         // should redirect to the login
         $response->assertStatus(302);
     }
 
     /**
-     * Companies list test with user.
+     * Employees list test with user.
      *
      * @return void
      */
-    public function test_companies_verified()
+    public function test_employees_verified()
     {
         // fetch authed user
         $this->setupUser();
         $this->authenticated();
 
-        $response = $this->get('/companies');
+        $response = $this->get('/employees');
         // should load
         $response->assertStatus(200);
     }
 
     /**
-     * Companies create form test.
+     * Employees create form test.
      *
      * @return void
      */
-    public function test_companies_create()
+    public function test_employees_create()
     {
         // fetch authed user
         $this->setupUser();
         $this->authenticated();
 
-        $response = $this->get('/companies/create');
+        $response = $this->get('/employees/create');
         // should load
         $response->assertStatus(200);
     }
 
     /**
-     * Companies save entity test.
+     * Employees save entity test.
      *
      * @return int
      */
-    public function test_companies_post()
+    public function test_employees_post()
     {
         // fetch authed user
         $this->setupUser();
         $this->authenticated();
 
-        // prevent the test from trying tio send real main
-        Mail::fake();
-
-        // prevent any events from triggering
-        Event::fake();
-
-        // doesn't really do much
-        Mail::assertNothingSent();
-
-        $name = 'Unit Test Company 1';
+        $firstName = 'Unit';
         $response = $this->post(
-            '/companies/create',
+            '/employees/create',
             [
-                'name' => $name,
-                'email' => 'unit-test@test-company1.com',
-                'website' => 'http://unit-test-company1.com',
+                'first_name' => $firstName,
+                'last_name' => 'Tester',
+                'company_id' => 1, // this makes a broad assumption that some companies exist
+                'email' => 'unit-tester@test-company1.com',
+                'phone' => '1234555555',
             ]
         );
-
-        Event::assertDispatched(NewCompanyNotification::class, function ($e) use ($name) {
-            return $e->company->name === $name;
-        });
-
-        Event::assertListening( NewCompanyNotification::class, SendNewCompanyNotification::class );
-
-        //Mail::assertSent(CompanyNotification::class, function ($mail) use ($name) {
-        //    return $mail->company->name === $name;
-        //});
-
-        /*Mail::assertQueued(CompanyNotification::class, function ($mail) use ($name) {
-            return $mail->company->name === $name;
-        });*/
 
         // should redirect
         $response->assertStatus(302);
 
-        // get companies to confirm insert
-        $companies = Company::all();
-        $inserted = $companies[count($companies)-1];
-        $this->assertEquals($name, $inserted->name);
+        // get employees to confirm insert
+        $employees = Employee::all();
+        $inserted = $employees[count($employees)-1];
+        $this->assertEquals($firstName, $inserted->first_name);
 
         // save the id if the last test passes
-        if ($inserted->name === $name) {
+        if ($inserted->first_name === $firstName) {
             return $inserted->id;
         }
-
-        // this is probably not needed
-        //return 0;
     }
 
     /**
-     * Companies edit form test.
+     * Employees edit form test.
      *
-     * @depends test_companies_post
+     * @depends test_employees_post
      */
-    public function test_companies_edit($id)
+    public function test_employees_edit($id)
     {
         // fetch authed user
         $this->setupUser();
         $this->authenticated();
 
-        $response = $this->get('/companies/edit/' . $id);
+        $response = $this->get('/employees/edit/' . $id);
         // should load
         $response->assertStatus(200);
 
@@ -178,22 +146,22 @@ class CompaniesTest extends TestCase
     }
 
     /**
-     * Companies delete entity test.
+     * Employees delete entity test.
      *
-     * @depends test_companies_edit
+     * @depends test_employees_edit
      */
-    public function test_companies_delete($id)
+    public function test_employees_delete($id)
     {
         // fetch authed user
         $this->setupUser();
         $this->authenticated();
 
-        $response = $this->get('/companies/delete/' . $id);
+        $response = $this->get('/employees/delete/' . $id);
         // should redirect
         $response->assertStatus(302);
 
         // check item is deleted
-        $company = Company::find($id);
-        self::assertEmpty($company);
+        $employee = Employee::find($id);
+        self::assertEmpty($employee);
     }
 }
