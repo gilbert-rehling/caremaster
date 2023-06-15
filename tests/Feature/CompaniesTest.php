@@ -36,7 +36,8 @@ class CompaniesTest extends TestCase
 {
     use Authentication;
 
-    public $companyId;
+    /** @var int */
+    public int $id;
 
     /**
      * Application loads.
@@ -97,7 +98,7 @@ class CompaniesTest extends TestCase
     /**
      * Companies save entity test.
      *
-     * @return void
+     * @return int
      */
     public function test_companies_post()
     {
@@ -135,47 +136,49 @@ class CompaniesTest extends TestCase
 
         // save the id if the last test passes
         if ($inserted->name === $name) {
-            $this->companyId = $inserted->id;
+            return $inserted->id;
         }
 
-    //    dd($this->companyId);
+        //return 0;
     }
 
     /**
      * Companies edit form test.
      *
-     * @return void
+     * @depends test_companies_post
      */
-    public function test_companies_edit()
+    public function test_companies_edit($id)
     {
         // fetch authed user
         $this->setupUser();
         $this->authenticated();
 
-        dd($this->companyId);
+       // dd($this->companyId);
 
-        $response = $this->get('/companies/edit/' . $this->companyId);
+        $response = $this->get('/companies/edit/' . $id);
         // should load
         $response->assertStatus(200);
+
+        return $id;
     }
 
     /**
      * Companies delete entity test.
      *
-     * @return void
+     * @depends test_companies_edit
      */
-    public function test_companies_delete()
+    public function test_companies_delete($id)
     {
         // fetch authed user
         $this->setupUser();
         $this->authenticated();
 
-        $response = $this->get('/companies/edit/' . $this->companyId);
+        $response = $this->get('/companies/delete/' . $id);
         // should redirect
         $response->assertStatus(302);
 
         // check item is deleted
-        $company = Company::find($this->companyId);
+        $company = Company::find($id);
         self::assertEmpty($company);
     }
 }
