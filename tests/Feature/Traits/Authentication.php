@@ -1,7 +1,7 @@
 <?php
 /*
  * Laravel (R)   Kickstart Project
- * @version      TrimStrings.php -  001 - 15 6 2023
+ * @version      Authentication.php -  001 - 15 6 2023
  * @link         https://github.com/gilbert-rehling/caremaster
  * @copyright    Copyright (c) 2023.  Gilbert Rehling. All right reserved. (www.gilbert-rehling.com)
  * @license      Released under the MIT model
@@ -18,20 +18,29 @@
  * Run: php artisan storage:link - to enable access to the public images
  */
 
-namespace App\Http\Middleware;
+namespace Tests\Feature\Traits;
 
-use Illuminate\Foundation\Http\Middleware\TrimStrings as Middleware;
+use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Tests\TestCase;
 
-class TrimStrings extends Middleware
+trait Authentication
 {
+    /** @var User $user */
+    protected $user;
+
     /**
-     * The names of the attributes that should not be trimmed.
-     *
-     * @var array<int, string>
+     * @before
      */
-    protected $except = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
+    public function setupUser()
+    {
+        $this->afterApplicationCreated(function() {
+            $this->user = User::factory()->create();
+        });
+    }
+
+    public function authenticated()
+    {
+        $this->actingAs($this->user);
+    }
 }
