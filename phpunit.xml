@@ -13,7 +13,7 @@
   ~ Create an appropriate database. MySQL was used for this project.
   ~ Create and populate the .env file
   ~ Run: php artisan migrate
-  ~ To seed the admin user run: php artisan db:seed --class=CreateUser
+  ~ To seed the admin user run: php artisan db:seed -class=CreateUser
   ~ Seed data is also available for the Companies dataset.
   ~ Run: php artisan storage:link - to enable access to the public images
   -->

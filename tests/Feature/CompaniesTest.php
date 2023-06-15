@@ -20,11 +20,15 @@
 
 namespace Tests\Feature;
 
+use App\Events\NewCompanyNotification;
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 use Tests\Feature\Traits\Authentication;
 use Tests\TestCase;
 
@@ -32,8 +36,10 @@ class CompaniesTest extends TestCase
 {
     use Authentication;
 
+    public $companyId;
+
     /**
-     * A basic feature test example.
+     * Application loads.
      *
      * @return void
      */
@@ -45,7 +51,7 @@ class CompaniesTest extends TestCase
     }
 
     /**
-     * Companies test.
+     * Companies list test.
      *
      * @return void
      */
@@ -57,7 +63,7 @@ class CompaniesTest extends TestCase
     }
 
     /**
-     * Companies test.
+     * Companies list test with user.
      *
      * @return void
      */
@@ -73,7 +79,7 @@ class CompaniesTest extends TestCase
     }
 
     /**
-     * Companies test.
+     * Companies create form test.
      *
      * @return void
      */
@@ -89,7 +95,7 @@ class CompaniesTest extends TestCase
     }
 
     /**
-     * Companies test.
+     * Companies save entity test.
      *
      * @return void
      */
@@ -99,15 +105,77 @@ class CompaniesTest extends TestCase
         $this->setupUser();
         $this->authenticated();
 
+        // prevent the test from trying tio send real main
+        Mail::fake();
+
+        // prevent any events from triggering
+        Event::fake();
+
+        $name = 'Unit Test Company 1';
         $response = $this->post(
             '/companies/create',
             [
-                'name' => 'Unit Test Company',
-                'email' => 'unit-test@test-company.com',
-                'phone' => '0444555555'
+                'name' => $name,
+                'email' => 'unit-test@test-company1.com',
+                'website' => 'http://unit-test-company1.com',
             ]
         );
+
+        Event::assertDispatched(NewCompanyNotification::class, function ($e) use ($name) {
+            return $e->company->name === $name;
+        });
+
+        // should redirect
+        $response->assertStatus(302);
+
+        // get companies to confirm insert
+        $companies = Company::all();
+        $inserted = $companies[count($companies)-1];
+        $this->assertEquals($name, $inserted->name);
+
+        // save the id if the last test passes
+        if ($inserted->name === $name) {
+            $this->companyId = $inserted->id;
+        }
+
+    //    dd($this->companyId);
+    }
+
+    /**
+     * Companies edit form test.
+     *
+     * @return void
+     */
+    public function test_companies_edit()
+    {
+        // fetch authed user
+        $this->setupUser();
+        $this->authenticated();
+
+        dd($this->companyId);
+
+        $response = $this->get('/companies/edit/' . $this->companyId);
         // should load
         $response->assertStatus(200);
+    }
+
+    /**
+     * Companies delete entity test.
+     *
+     * @return void
+     */
+    public function test_companies_delete()
+    {
+        // fetch authed user
+        $this->setupUser();
+        $this->authenticated();
+
+        $response = $this->get('/companies/edit/' . $this->companyId);
+        // should redirect
+        $response->assertStatus(302);
+
+        // check item is deleted
+        $company = Company::find($this->companyId);
+        self::assertEmpty($company);
     }
 }
