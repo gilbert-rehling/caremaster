@@ -56,6 +56,16 @@ Route::get(
     ]
 )->name('home');
 
+/**
+ * Optional Admin route
+ */
+Route::get(
+    '/admin',
+    [
+        HomeController::class, 'index'
+    ]
+)->name('admin');
+
 /** Companies routes - class ref */
 /*
 |------------------------------------------
