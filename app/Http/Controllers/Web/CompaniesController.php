@@ -40,6 +40,9 @@ use Throwable;
 /**
  * Handle web based company data requests
  *
+ * Note: methods that change data have been wrapped in try/catch blocks
+ *       This allows us to handle unexpected errors in a UX friendly manner
+ *
  * ToDo: fix up the session flash alert class handling in the views
  */
 class CompaniesController extends Controller
@@ -61,11 +64,15 @@ class CompaniesController extends Controller
             return array_pop($arr);
 
         } catch (\Exception $e) {
+            // Report
+            report($e);
+
+            // Notify
             Session::flash('status', $e->getMessage());
             //Session::flash('alert-class', 'alert-danger');
 
-            // return to form
-            return redirect('/companies/create');
+            // Returning to the form is a safe option but may not fit your UX requirements
+            redirect('/companies/create');
         }
     }
 
@@ -83,13 +90,15 @@ class CompaniesController extends Controller
             Storage::delete($path);
 
         } catch (\Exception $e) {
-            // do not continue !!
+            // Report
+            report($e);
+
+            // Notify
             Session::flash('status', $e->getMessage());
             //Session::flash('alert-class', 'alert-danger');
 
-            // return to form
+            // Halt progress and return to form
             redirect('/companies/create');
-            return;
         }
     }
 
@@ -174,16 +183,10 @@ class CompaniesController extends Controller
             // return to list
             return redirect('/companies');
 
-        } catch (ValidationException $e) {
-            // This should be handled by Laravel
-            Session::flash('status', $e->getMessage());
-            //Session::flash('alert-class', 'alert-danger');
-
-            // return to form
-            return redirect('/companies/create');
-
         } catch (\Exception $e) {
-            // get unhandled exceptions
+            // Catch and report unhandled exceptions
+            report($e);
+
             Session::flash('status', $e->getMessage());
             //Session::flash('alert-class', 'alert-danger');
 
@@ -260,7 +263,9 @@ class CompaniesController extends Controller
             return redirect('/companies');
 
         } catch (\Exception $e) {
-            // get unhandled exceptions
+            // Catch and report unhandled exceptions
+            report($e);
+
             Session::flash('status', $e->getMessage());
             //Session::flash('alert-class', 'alert-danger');
 
@@ -303,7 +308,9 @@ class CompaniesController extends Controller
             return redirect('/companies');
 
         } catch(\Exception $e) {
-            // get unhandled exceptions
+            // Catch and report unhandled exceptions
+            report($e);
+
             Session::flash('status', $e->getMessage());
             //Session::flash('alert-class', 'alert-danger');
 

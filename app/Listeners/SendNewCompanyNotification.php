@@ -38,8 +38,7 @@ class SendNewCompanyNotification
      *
      * @var string
      */
-    //private string $toAddress = 'test@tester.com';
-    private string $toAddress = 'gilbert.rehling@gmail.com';
+    private string $toAddress = 'test@tester.com';
 
     /**
      * Create the event listener.

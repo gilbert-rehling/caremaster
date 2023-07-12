@@ -39,6 +39,9 @@ use Illuminate\Validation\ValidationException;
 /**
  * Handle web based employee data requests
  *
+ * Note: methods that change data have been wrapped in try/catch blocks
+ *       This allows us to handle unexpected errors in a UX friendly manner
+ *
  * ToDo: fix up the session flash alert class handling in the views
  */
 class EmployeesController extends Controller
@@ -100,7 +103,6 @@ class EmployeesController extends Controller
             $employee->last_name = $data['last_name'];
             $employee->email = $data['email'];
             $employee->phone = $data['phone'];
-        //    $employee->save();
             $employee->company()->associate(Company::find($data['company_id']));
             $employee->save();
 
@@ -112,17 +114,10 @@ class EmployeesController extends Controller
             // return to list
             return redirect('/employees');
 
-
-        } catch (ValidationException $e) {
-            // This should be handled by Laravel
-            Session::flash('status', $e->getMessage());
-            //Session::flash('alert-class', 'alert-danger');
-
-            // return to form
-            return redirect('/employees/create');
-
         } catch (\Exception $e) {
-            // get unhandled exceptions
+            // Catch and report unhandled exceptions
+            report($e);
+
             Session::flash('status', $e->getMessage());
             //Session::flash('alert-class', 'alert-danger');
 
@@ -206,7 +201,9 @@ class EmployeesController extends Controller
             return redirect('/employees');
 
         } catch (\Exception $e) {
-            // get unhandled exceptions
+            // Catch and report unhandled exceptions
+            report($e);
+
             Session::flash('status', $e->getMessage());
             //Session::flash('alert-class', 'alert-danger');
 
@@ -243,7 +240,9 @@ class EmployeesController extends Controller
             return redirect('/employees');
 
         } catch(\Exception $e) {
-            // get unhandled exceptions
+            // Catch and report unhandled exceptions
+            report($e);
+
             Session::flash('status', $e->getMessage());
             //Session::flash('alert-class', 'alert-danger');
 
