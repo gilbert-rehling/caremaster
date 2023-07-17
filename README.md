@@ -14,13 +14,14 @@ Laravel quickstart takes the pain out of getting started on your development jou
 
 The following is a short list of features that have already been incorporated:
 
+- Authentication using native Laravel AUTH via the Vue UI templates.
 - 2 fully working components along with their required models.
 - An example of using foreign key relationships.
 - Sensible validation with separation for Create and Update for both components.
-- Example for initial data population.
+- Example for initial data seeding.
 - Example of using events and listeners.
 - Sending an email notification.
-- Working unit testing for most actions.
+- Working unit tests for most actions.
 
 ## Contributions
 
